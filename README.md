@@ -2,7 +2,9 @@
 
 Making a POST request /alerts will result in a new row in the Alerts table with the
 data of the incoming alert. If that alert is of type "SpamNotification", it will
-also send a slack message asynchronously. 
+also send a slack message asynchronously.
+
+This application is live at: https://monitoringtoslack.onrender.com
 
 ## Configuring slack
 
@@ -81,6 +83,58 @@ create a row in the alerts table:
 
 ## Deploying to the web
 
+This app is configured to be deployed on render. To do so:
+
+- Fork my repo
+- [Sign up for render](https://dashboard.render.com/register) and connect your github
+- Click Blueprints
+- Click create new blueprint
+- Connect to the forked repo
+- Paste in the value of the slack endpoint (see configuring slack header)
+- Paste in the value for the rails master key (found in config/master.key)
+- Click apply, wait for render to create your web service and database
+
+If you're having issues, [the render docs](https://render.com/docs/deploy-rails) are great.
+
+Now, you can hit `<your-url>/alerts` with the following payload to generate an alert to slack:
+
+```json
+{
+  "RecordType": "Bounce",
+  "Type": "SpamNotification",
+  "TypeCode": 512,
+  "Name": "Spam notification",
+  "Tag": "",
+  "MessageStream": "outbound",
+  "Description": "The message was delivered, but was either blocked by the user, or classified as spam, bulk mail, or had rejected content.",
+  "Email": "zaphod@example.com",
+  "From": "notifications@honeybadger.io",
+  "BouncedAt": "2023-02-27T21:41:30Z"
+}
+```
+
+(Note the trailing comma from the example was removed as it was not valid JSON)
+
+You can use the following payload and it will not generate an alert to slack, but will still
+create a row in the alerts table:
+
+```json
+{
+  "RecordType": "Bounce",
+  "MessageStream": "outbound",
+  "Type": "HardBounce",
+  "TypeCode": 1,
+  "Name": "Hard bounce",
+  "Tag": "Test",
+  "Description": "The server was unable to deliver your message (ex: unknown user, mailbox not found).",
+  "Email": "arthur@example.com",
+  "From": "notifications@honeybadger.io",
+  "BouncedAt": "2019-11-05T16:33:54.9070259Z"
+}
+```
+
+(Note the trailing comma from the example was removed as it was not valid JSON)
+
 ## What I would do if I had more time
 
 - Some error handling
@@ -91,3 +145,4 @@ create a row in the alerts table:
   - Some controller-level tests
   - Some tests for the SlackNotificationJob
 - Some JSON deserialization to make turning the request body into an object less fragile
+- Add honeybadger, of coursse
