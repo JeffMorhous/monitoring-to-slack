@@ -1,0 +1,18 @@
+databases:
+  - name: monitoring-to-slack
+    databaseName: monitoring-to-slack
+    user: monitoring-to-slack
+
+services:
+  - type: web
+    name: monitoring-to-slack
+    env: ruby
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: monitoring-to-slack
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
