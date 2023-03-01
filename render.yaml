@@ -2,9 +2,11 @@ databases:
   - name: monitoringtoslack
     databaseName: monitoringtoslack
     user: monitoringtoslack
+    plan: free
 
 services:
   - type: web
+    plan: free
     name: monitoringtoslack
     env: ruby
     buildCommand: "./bin/render-build.sh"
