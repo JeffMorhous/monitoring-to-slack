@@ -16,5 +16,5 @@ services:
         fromDatabase:
           name: monitoringtoslack
           property: connectionString
-      - key: RAILS_MASTER_KEY
+      - key: SLACK_ENDPOINT
         sync: false
